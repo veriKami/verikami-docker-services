@@ -12,13 +12,13 @@ or
 ツ make up
 ```
 
-##END (clean all resources)
+## END (clean all resources)
 
 ```
 ツ make end
 ```
 
-##User Service (browser)
+## User Service (browser)
 
 - [http://localhost:8080](http://localhost:8080)
 
@@ -29,7 +29,7 @@ or
  **Update** - [http://localhost:8080/update](http://localhost:8080/update)  
  **Delete** - [http://localhost:8080/delete](http://localhost:8080/delete)  
 
-##Notification Service (terminal only)
+## Notification Service (terminal only)
 
 - [http://localhost:8081](http://localhost:8081)
 
