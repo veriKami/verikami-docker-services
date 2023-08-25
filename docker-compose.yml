@@ -1,0 +1,95 @@
+version: "3"
+
+services:
+
+  postgres:
+    container_name: in_postgres
+    image: postgres:14-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: kami
+      POSTGRES_PASSWORD: kami
+      POSTGRES_DB: verikami
+    volumes:
+      - ./data-postgres:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - in_kami
+
+  #mongo:
+  #  container_name: in_mongo
+  #  image: mongo
+  #  restart: always
+  #  ports:
+  #    - "27017:27017"
+  #  volumes:
+  #    - ./data-mongo:/data/db
+  #  environment:
+  #    MONGO_INITDB_ROOT_USERNAME: kami
+  #    MONGO_INITDB_ROOT_PASSWORD: kami
+
+  #rabbitmq:
+  #  container_name: in_rabbitmq
+  #  image: rabbitmq:3-management-alpine
+  #  ports:
+  #    # AMQP protocol port
+  #    - "5672:5672"
+  #    # HTTP management UI
+  #    - "15672:15672"
+  #  networks:
+  #    - in_kami
+
+  app:
+    container_name: app_user
+    restart: always
+    build: 
+      context: ./service-user
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      #- mongo
+    links:
+      - postgres
+      #- mongo
+      #- rabbitmq
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: kami
+      DB_PASSWORD: kami
+      DB_NAME: verikami
+    networks:
+      - in_kami
+
+  notify:  
+    container_name: app_notify
+    restart: always
+    build: 
+      context: ./service-notify
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: kami
+      DB_PASSWORD: kami
+      DB_NAME: verikami
+    networks:
+      - in_kami
+
+networks:
+  in_kami:
+    driver: bridge
+
+volumes:
+  data-postgres:
+  #data-mongo:
